@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1721817004421,
+  "lastUpdate": 1721848459794,
   "repoUrl": "https://github.com/CihatAltiparmak/moveit_middleware_benchmark",
   "entries": {
     "Movet Middleware Benchmark Project Perception Pipeline Benchmark": [
@@ -60,6 +60,36 @@ window.BENCHMARK_DATA = {
             "value": 254523055801.00003,
             "unit": "ns/iter",
             "extra": "iterations: 1\ncpu: 1679029366 ns\nthreads: 1"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cihataltiparmak1@gmail.com",
+            "name": "CihatAltiparmak",
+            "username": "CihatAltiparmak"
+          },
+          "committer": {
+            "email": "cihataltiparmak1@gmail.com",
+            "name": "CihatAltiparmak",
+            "username": "CihatAltiparmak"
+          },
+          "distinct": true,
+          "id": "001df83d0192a01f32a0888fe36b264fe1429a59",
+          "message": "Fixed dockerfile and dependencies. Middlewares were added as dependencies. (rmw_fastrtps, rmw_zenoh, rmw_cyclonedds)",
+          "timestamp": "2024-07-24T22:07:10+03:00",
+          "tree_id": "b4cebd241d6fe22b0160db791baebb5bddf7747a",
+          "url": "https://github.com/CihatAltiparmak/moveit_middleware_benchmark/commit/001df83d0192a01f32a0888fe36b264fe1429a59"
+        },
+        "date": 1721848459020,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "ScenarioPerceptionPipelineFixture/test_scenario_perception_pipeline",
+            "value": 221257816511.00003,
+            "unit": "ns/iter",
+            "extra": "iterations: 1\ncpu: 1586523451.0000002 ns\nthreads: 1"
           }
         ]
       }
