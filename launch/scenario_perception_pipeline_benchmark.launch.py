@@ -3,7 +3,7 @@ from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch.conditions import IfCondition
 from launch_ros.actions import Node
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_share_directory, get_package_prefix
 from launch.actions import (
     DeclareLaunchArgument,
     ExecuteProcess,
@@ -15,6 +15,54 @@ from launch.actions import (
 from launch.event_handlers import OnProcessExit
 from launch_ros.substitutions import FindPackageShare
 from moveit_configs_utils import MoveItConfigsBuilder
+import subprocess
+
+
+class ZenohRouterStarter:
+    def __init__(self):
+        self.tty_file_descriptor = None
+        self.zenoh_router_sub_process = None
+
+    def start_router(self):
+        try:
+            rmw_zenoh_cpp_router_executable_path = os.path.join(
+                get_package_prefix("rmw_zenoh_cpp"), "lib/rmw_zenoh_cpp/rmw_zenohd"
+            )
+
+            self.tty_file_descriptor = open("/dev/tty")
+            self.zenoh_router_sub_process = subprocess.Popen(
+                [rmw_zenoh_cpp_router_executable_path],
+                stdin=self.tty_file_descriptor,
+            )
+        except Exception as err:
+            print(f"Unexpected {err=}, {type(err)=}")
+            raise
+
+    def terminate_router(self):
+        self.zenoh_router_sub_process.terminate()
+        self.zenoh_router_sub_process.wait()
+
+    def __del__(self):
+        if self.tty_file_descriptor is not None:
+            self.tty_file_descriptor.close()
+
+
+# for rmw_zenoh_router
+zenoh_router_starter = ZenohRouterStarter()
+if (
+    "RMW_IMPLEMENTATION" in os.environ.keys()
+    and os.environ.get("RMW_IMPLEMENTATION") == "rmw_zenoh_cpp"
+):
+    zenoh_router_starter.start_router()
+
+
+def shutdown_launch():
+    if (
+        "RMW_IMPLEMENTATION" in os.environ.keys()
+        and os.environ.get("RMW_IMPLEMENTATION") == "rmw_zenoh_cpp"
+    ):
+        zenoh_router_starter.terminate_router()
+    Shutdown()()
 
 
 def launch_setup(context, *args, **kwargs):
@@ -132,7 +180,7 @@ def launch_setup(context, *args, **kwargs):
             {"use_sim_time": True},
             {"selected_test_case_index": selected_test_case_index},
         ],
-        on_exit=Shutdown(),
+        on_exit=lambda *args: shutdown_launch(),
     )
 
     return [
